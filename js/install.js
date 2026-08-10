@@ -1,1 +1,15 @@
-/* Implementasi lifecycle instalasi PWA dijadwalkan pada Phase 6. */
+const PWA=(()=>{
+  let deferredPrompt=null,registration=null,dismissed=sessionStorage.getItem('pwa_install_dismissed')==='1';
+  const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  const ios=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)&&/safari/i.test(navigator.userAgent)&&!/crios|fxios/i.test(navigator.userAgent);
+  const quizActive=()=>document.body?.dataset.page==='quiz'&&sessionStorage.getItem('pemilih_muda_quiz_active')==='1';
+  function toast(message,action){let node=document.querySelector('#pwa-toast');if(!node){node=document.createElement('div');node.id='pwa-toast';node.className='pwa-toast';node.setAttribute('role','status');document.body.append(node)}node.replaceChildren(document.createTextNode(message));if(action){const button=document.createElement('button');button.type='button';button.textContent=action.label;button.onclick=action.run;node.append(button)}node.hidden=false}
+  function installCenter(){if(standalone()||dismissed)return;document.querySelectorAll('[data-install-app]').forEach(button=>{button.hidden=!(deferredPrompt||ios());button.textContent=ios()?'CARA PASANG':'INSTALL APLIKASI';button.onclick=install})}
+  async function install(){if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installCenter();return}if(ios()){const dialog=document.querySelector('#ios-install-dialog');if(dialog?.showModal)return dialog.showModal();alert('Tekan Bagikan, pilih Tambah ke Layar Utama, aktifkan Buka sebagai Aplikasi Web jika tersedia, lalu tekan Tambah.')}}
+  async function register(){if(!('serviceWorker'in navigator)||location.protocol!=='https:')return;try{registration=await navigator.serviceWorker.register(`${CONFIG.BASE_PATH}service-worker.js`,{scope:CONFIG.BASE_PATH});registration.addEventListener('updatefound',()=>{const worker=registration.installing;worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)offerUpdate(worker)})});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!quizActive())location.reload()})}catch(error){if(CONFIG.DEBUG)console.warn('Service worker gagal didaftarkan',error)}}
+  function offerUpdate(worker){const run=()=>{if(quizActive()){toast('Update ditunda sampai challenge selesai.');return}worker.postMessage({type:'SKIP_WAITING'})};toast('Versi baru Pemilih Muda tersedia.',{label:'PERBARUI SEKARANG',run})}
+  function connection(){toast(navigator.onLine?'Koneksi kembali tersedia.':'Koneksi terputus.')}
+  function init(){window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredPrompt=event;installCenter()});window.addEventListener('appinstalled',()=>{deferredPrompt=null;document.querySelectorAll('[data-install-app]').forEach(b=>b.hidden=true);toast('Pemilih Muda berhasil dipasang.')});window.addEventListener('online',connection);window.addEventListener('offline',connection);document.querySelectorAll('[data-install-dismiss]').forEach(b=>b.onclick=()=>{dismissed=true;sessionStorage.setItem('pwa_install_dismissed','1');b.closest('[data-install-center]')?.remove()});installCenter();register()}
+  return{init,install};
+})();
+PWA.init();

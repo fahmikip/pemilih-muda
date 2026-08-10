@@ -5,12 +5,12 @@ const QuizPage=(()=>{
   async function init(){
     const session=Auth.requireLogin();if(!session)return;
     token=session.token;seasonId=new URLSearchParams(location.search).get("seasonId")||"";
-    try{const started=await apiPost("startQuiz",{seasonId},token);if(started.data.completed){renderResult(started.data.result);return}loadPackage(started.data)}catch(error){showFatal(error)}
+    try{const started=await apiPost("startQuiz",{seasonId},token);if(started.data.completed){sessionStorage.removeItem('pemilih_muda_quiz_active');renderResult(started.data.result);return}loadPackage(started.data)}catch(error){sessionStorage.removeItem('pemilih_muda_quiz_active');showFatal(error)}
   }
 
   function loadPackage(data){
     if(!Array.isArray(data.questions)||!data.questions.length){showFatal({code:"QUIZ_NOT_AVAILABLE",message:"Paket soal tidak tersedia pada deployment API ini."});return}
-    quizSessionId=data.quizSessionId;questions=data.questions;remaining=Math.max(0,Number(data.remainingSeconds||0));restoreDraft();
+    quizSessionId=data.quizSessionId;questions=data.questions;remaining=Math.max(0,Number(data.remainingSeconds||0));sessionStorage.setItem('pemilih_muda_quiz_active','1');restoreDraft();
     document.querySelector("#quiz-loading")?.setAttribute("hidden","");document.querySelector("#quiz-screen")?.removeAttribute("hidden");Utils.setText("[data-season-name]",data.season.Name);startTimer(Number(data.season.QuizDuration||0));renderQuestion();
   }
 
@@ -43,7 +43,7 @@ const QuizPage=(()=>{
 
   async function submitQuiz(autoSubmit){
     if(submitting)return;submitting=true;clearInterval(timerId);document.querySelector("[data-confirm-dialog]")?.close();const button=document.querySelector("[data-submit-quiz]");Utils.setButtonLoading(button,true,autoSubmit?"Waktu habis, mengirim…":"Mengirim jawaban…");
-    try{const payload=questions.filter(question=>answers[question.questionId]).map(question=>({questionId:question.questionId,selectedOptionId:answers[question.questionId]})),response=await apiPost("submitQuiz",{quizSessionId,answers:payload},token);localStorage.removeItem(draftKey());renderResult(response.data.result)}catch(error){submitting=false;Utils.setButtonLoading(button,false);Utils.toast(Utils.errorMessage(error),"error");if(error.code==="QUIZ_SESSION_EXPIRED")showFatal(error);else showReview()}
+    try{const payload=questions.filter(question=>answers[question.questionId]).map(question=>({questionId:question.questionId,selectedOptionId:answers[question.questionId]})),response=await apiPost("submitQuiz",{quizSessionId,answers:payload},token);localStorage.removeItem(draftKey());sessionStorage.removeItem('pemilih_muda_quiz_active');renderResult(response.data.result)}catch(error){submitting=false;Utils.setButtonLoading(button,false);Utils.toast(navigator.onLine?Utils.errorMessage(error):"Jawaban tersimpan sementara di perangkat. Hubungkan kembali ke internet untuk mengirim.","error");if(error.code==="QUIZ_SESSION_EXPIRED")showFatal(error);else showReview()}
   }
 
   function renderResult(result){

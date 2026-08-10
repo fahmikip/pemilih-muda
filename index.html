@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/landing.css">
   <link rel="stylesheet" href="css/responsive.css">
-</head>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"></head>
 <body data-page="landing">
   <a class="skip-link" href="#main">Lewati ke konten</a>
   <header class="site-header container">
@@ -38,9 +38,10 @@
     </section>
     <section id="cara-bermain" class="section section-muted"><div class="container"><p class="eyebrow">CARA BERMAIN</p><h2>Enam langkah menjadi pemilih cerdas</h2><ol class="steps"><li><b>01</b><span>Daftar</span></li><li><b>02</b><span>Pelajari materi</span></li><li><b>03</b><span>Ikuti quiz</span></li><li><b>04</b><span>Kumpulkan point</span></li><li><b>05</b><span>Naik leaderboard</span></li><li><b>06</b><span>Jadi champion</span></li></ol></div></section>
     <section class="section container"><div class="public-season" data-public-season><p class="eyebrow">CHALLENGE BULAN INI</p><h2>Memuat season aktif…</h2><p class="muted">Mengambil informasi terbaru dari server.</p></div></section>
+    <section class="section container" data-install-center><div class="pwa-install-card"><div><p class="eyebrow">INSTALL PEMILIH MUDA</p><h2>Pasang aplikasi di perangkatmu</h2><p>Gunakan seperti aplikasi tanpa menghilangkan akses versi web.</p></div><div class="pwa-install-actions"><button class="button button-primary" type="button" data-install-app hidden>INSTALL APLIKASI</button><button class="button button-ghost" type="button" data-install-dismiss>Nanti</button></div></div></section>
     <section id="tentang" class="section container"><p class="eyebrow">TENTANG</p><h2>Ruang belajar demokrasi yang aman</h2><p class="section-copy">Pemilih Muda dirancang untuk meningkatkan literasi kepemiluan tanpa mendukung kandidat atau partai mana pun. Data pribadi peserta tidak ditampilkan pada leaderboard publik.</p></section>
-  </main>
+  </main><dialog class="ios-install-dialog" id="ios-install-dialog"><h2>Pasang di iPhone atau iPad</h2><ol><li>Tekan tombol Bagikan / Share.</li><li>Pilih Tambah ke Layar Utama.</li><li>Aktifkan Buka sebagai Aplikasi Web jika tersedia.</li><li>Tekan Tambah.</li></ol><button class="button button-primary" type="button" onclick="this.closest('dialog').close()">Mengerti</button></dialog>
   <footer><div class="container footer-content"><span>© <span data-current-year></span> Pemilih Muda</span><span>Platform edukasi netral dan nonpartisan</span></div></footer>
   <script src="js/config.js?v=1.2.1"></script><script src="js/utils.js?v=1.2.1"></script><script src="js/api.js?v=1.2.1"></script><script src="js/app.js?v=1.2.1"></script>
-</body>
+<script src="js/install.js?v=2.1.0"></script></body>
 </html>
