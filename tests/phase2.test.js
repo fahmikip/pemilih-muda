@@ -847,7 +847,7 @@ console.log("Phase 6 batch quiz tests passed.");
     "Users",
     "UserID",
     registration.data.UserID,
-    { Name: "Siswa Demo" },
+    { Name: "Udin Saputra" },
   );
   const rankSeason = {
     SeasonID: "SEA_RANK_TEST",
@@ -886,7 +886,7 @@ console.log("Phase 6 batch quiz tests passed.");
     },
     {
       UserID: rankC,
-      Name: "Citra Lestari",
+      Name: "Siti Aminah",
       NIS: "9000000003",
       SchoolID: "SCH_DEMO_02",
       Role: "STUDENT",
@@ -918,6 +918,16 @@ console.log("Phase 6 batch quiz tests passed.");
       UpdatedAt: context.nowIso_(),
     },
   ]);
+  const budiToken = "budi-rank-session-token";
+  context.DatabaseService.insert("Sessions", {
+    SessionToken: context.sha256Hex_(budiToken),
+    UserID: rankB,
+    Role: "STUDENT",
+    CreatedAt: context.nowIso_(),
+    ExpiredAt: new Date(Date.now() + 3600000).toISOString(),
+    LastActivityAt: context.nowIso_(),
+    Status: "ACTIVE",
+  });
   context.DatabaseService.insertMany("PointTransactions", [
     {
       PointID: "PNT_RANK_A",
@@ -947,7 +957,7 @@ console.log("Phase 6 batch quiz tests passed.");
       SeasonID: rankSeason.SeasonID,
       SourceType: "ADMIN",
       SourceID: "RANK_C",
-      Point: 40,
+      Point: 30,
       Status: "VALID",
       CreatedAt: context.nowIso_(),
       CreatedBy: "SYSTEM",
@@ -1063,11 +1073,11 @@ console.log("Phase 6 batch quiz tests passed.");
   assert.equal(publicRank.data.totalParticipants, 3);
   assert.deepEqual(
     publicRank.data.entries.map((row) => row.point),
-    [70, 40, 40],
+    [70, 40, 30],
   );
   assert.deepEqual(
     publicRank.data.entries.map((row) => row.name),
-    ["Budi S.", "Citra L.", "Siswa D."],
+    ["Budi S.", "Udin S.", "Siti A."],
   );
   assert.equal(JSON.stringify(publicRank).includes("USR_RANK"), false);
   assert.equal(
@@ -1088,9 +1098,21 @@ console.log("Phase 6 batch quiz tests passed.");
     { seasonId: rankSeason.SeasonID },
     studentToken,
   );
-  assert.equal(myRank.data.rank, 3);
+  assert.equal(myRank.data.rank, 2);
   assert.equal(myRank.data.seasonPoint, 40);
   assert.equal(myRank.data.distanceToTop, 30);
+  assert.equal(myRank.data.totalParticipants, 3);
+  assert.equal(myRank.data.seasonId, rankSeason.SeasonID);
+  assert.equal(myRank.data.seasonName, rankSeason.Name);
+  const budiRank = call(
+    "POST",
+    "getMyRank",
+    { seasonId: rankSeason.SeasonID },
+    budiToken,
+  );
+  assert.equal(budiRank.data.rank, 1);
+  assert.equal(budiRank.data.seasonPoint, 70);
+  assert.equal(budiRank.data.totalParticipants, 3);
   const schoolRank = call("GET", "getSchoolLeaderboard", {
     seasonId: rankSeason.SeasonID,
   });
@@ -1107,7 +1129,7 @@ console.log("Phase 6 batch quiz tests passed.");
     seasonId: rankSeason.SeasonID,
   });
   assert.equal(refreshedRank.data.entries[0].point, 100);
-  assert.equal(refreshedRank.data.entries[0].name, "Siswa D.");
+  assert.equal(refreshedRank.data.entries[0].name, "Udin S.");
   const adminToken = call("POST", "login", {
       identifier: "admin@example.test",
       password: "SangatRahasia123!",

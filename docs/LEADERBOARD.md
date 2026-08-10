@@ -18,7 +18,7 @@ Public response tidak memuat UserID, NIS/NISN, email, WhatsApp, tanggal lahir, t
 
 ## Cache dan performa
 
-Snapshot agregasi memakai key `LEADERBOARD_V1_<SeasonID>` dengan TTL 180 detik. Dalam cache miss, PointTransactions, Users, Schools, QuizSessions, dan FraudLogs masing-masing dibaca sekali lalu dibentuk menjadi map in-memory. Semua peserta dihasilkan tanpa lookup Spreadsheet per peserta.
+Snapshot agregasi memakai key `LEADERBOARD_V2_<SeasonID>` dengan TTL 180 detik. Dalam cache miss, PointTransactions, Users, Schools, QuizSessions, dan FraudLogs masing-masing dibaca sekali lalu dibentuk menjadi map in-memory. `getLeaderboard` dan `getMyRank` menggunakan helper `buildSeasonLeaderboard_()` yang sama, sehingga rank, poin season, dan jumlah peserta selalu berasal dari snapshot identik. Semua peserta dihasilkan tanpa lookup Spreadsheet per peserta.
 
 `PointService.awardQuiz` membatalkan cache season setelah award. Helper `invalidateLeaderboardCache_(seasonId)` wajib dipanggil endpoint admin adjust, invalidasi, atau reversal transaksi ketika endpoint tersebut ditambahkan. Perubahan manual langsung pada spreadsheet dapat terlihat paling lambat setelah TTL berakhir.
 
