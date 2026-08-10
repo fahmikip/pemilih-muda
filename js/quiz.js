@@ -1,1 +1,1 @@
-/* Quiz UI akan mengonsumsi pertanyaan yang dipilih server pada Phase 9. */
+(async()=>{const session=Auth.requireLogin();if(!session)return;try{await apiPost("getProfile",{},session.token);Utils.setText("[data-quiz-title]","Quiz belum dibuka");Utils.setText("[data-quiz-message]","Session Anda valid. Quiz Engine belum diaktifkan pada fase ini.")}catch(error){Utils.setText("[data-quiz-title]","Session tidak valid");Utils.setText("[data-quiz-message]",Utils.errorMessage(error))}})();

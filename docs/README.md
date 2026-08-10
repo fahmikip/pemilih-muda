@@ -4,7 +4,7 @@ Pemilih Muda adalah PWA edukasi pemilih pemula yang netral dan nonpartisan. Fron
 
 ## Status
 
-Phase 1–4 selesai. Frontend GitHub Pages kini memakai satu API client untuk health, schools, active season, register, login, profile, session, dan logout. Quiz engine belum diaktifkan agar tidak ada API palsu.
+Phase 1–4 dan authentication E2E selesai. Frontend GitHub Pages memakai satu API client untuk health, schools, active season, register, login, protected student/admin pages, profile, session expiration, dan logout. Quiz engine belum diaktifkan agar tidak ada API palsu.
 
 ## Menghubungkan frontend
 
