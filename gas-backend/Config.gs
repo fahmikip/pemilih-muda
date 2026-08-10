@@ -1,0 +1,8 @@
+var APP_CONFIG = Object.freeze({
+  NAME: 'Pemilih Muda',
+  VERSION: '1.0.0',
+  ENVIRONMENT: 'development',
+  SESSION_TTL_SECONDS: 21600,
+  MAX_BODY_LENGTH: 50000,
+  PASSWORD_HASH_ITERATIONS: 1000
+});

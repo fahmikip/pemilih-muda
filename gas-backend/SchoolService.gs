@@ -1,0 +1,1 @@
+var SchoolService=Object.freeze({getPublicSchools:function(){var data=DatabaseService.getAllRows('Schools').filter(function(row){return row.Status==='ACTIVE';}).map(function(row){return{SchoolID:row.SchoolID,SchoolName:row.SchoolName,Type:row.Type,District:row.District};});return successResponse(data,'Data sekolah berhasil dimuat.');}});

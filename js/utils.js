@@ -1,0 +1,10 @@
+const Utils=Object.freeze({
+  isConfiguredApi(){return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec(?:\?.*)?$/.test(CONFIG.API_URL)},
+  pageUrl(page="",params={}){const base=CONFIG.BASE_PATH.endsWith("/")?CONFIG.BASE_PATH:`${CONFIG.BASE_PATH}/`;const query=new URLSearchParams(params).toString();return `${base}${page}${query?`?${query}`:""}`},
+  setText(selector,value){const node=document.querySelector(selector);if(node)node.textContent=value??"—"},
+  formObject(form){return Object.fromEntries(new FormData(form).entries())},
+  formatDate(value){if(!value)return"—";const date=new Date(value);return Number.isNaN(date.getTime())?String(value):new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"long",year:"numeric"}).format(date)},
+  setButtonLoading(button,loading,label="Memproses…"){if(!button)return;if(loading){button.dataset.label=button.textContent;button.disabled=true;button.innerHTML=`<span class="spinner" aria-hidden="true"></span>${label}`}else{button.disabled=false;button.textContent=button.dataset.label||button.textContent}},
+  toast(message,type="info"){let region=document.querySelector(".toast-region");if(!region){region=document.createElement("div");region.className="toast-region";region.setAttribute("aria-live","polite");document.body.append(region)}const toast=document.createElement("div");toast.className=`toast toast-${type}`;toast.textContent=message;region.append(toast);requestAnimationFrame(()=>toast.classList.add("toast-visible"));setTimeout(()=>{toast.classList.remove("toast-visible");setTimeout(()=>toast.remove(),250)},4500)},
+  errorMessage(error){const messages={DUPLICATE_NIS:"NIS/NISN sudah terdaftar.",DUPLICATE_EMAIL:"Email sudah terdaftar.",SCHOOL_NOT_FOUND:"Sekolah tidak ditemukan atau sudah tidak aktif.",INVALID_CREDENTIALS:"Email/NIS atau password salah.",USER_BLOCKED:"Akun diblokir. Hubungi administrator.",USER_SUSPENDED:"Akun ditangguhkan. Hubungi administrator.",SESSION_EXPIRED:"Sesi berakhir. Silakan masuk kembali.",RATE_LIMITED:"Terlalu banyak percobaan. Tunggu beberapa menit."};return messages[error.code]||error.message||"Terjadi kesalahan."}
+});

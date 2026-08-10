@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#123b6d"><title>Daftar — Pemilih Muda</title><link rel="stylesheet" href="css/variables.css"><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/student.css"><link rel="stylesheet" href="css/responsive.css"></head>
+<body data-page="register"><main class="auth-layout"><section class="auth-card auth-card-wide"><a class="brand" href="./"><span class="brand-mark">PM</span><span>PEMILIH MUDA</span></a><p class="eyebrow">AKUN PESERTA</p><h1>Daftar Pemilih Muda</h1><p class="muted">Gunakan data yang benar. Sekolah berasal langsung dari master database.</p>
+<form id="register-form" class="form-grid">
+  <label class="field-wide">Nama lengkap<input name="name" autocomplete="name" maxlength="120" required></label>
+  <label>NIS/NISN<input name="nis" inputmode="numeric" pattern="[0-9]{5,20}" maxlength="20" required></label>
+  <label>Kelas<input name="class" maxlength="40" placeholder="Contoh: XII IPA 1" required></label>
+  <div class="field-wide school-picker"><label for="school-search">Cari sekolah</label><input id="school-search" type="search" placeholder="Ketik nama atau kecamatan…" disabled><label for="schoolId">Asal sekolah</label><select id="schoolId" name="schoolId" required disabled><option value="">Memuat sekolah…</option></select><small id="school-state" role="status" aria-live="polite">Memuat daftar sekolah…</small></div>
+  <label>Tanggal lahir<input type="date" name="birthDate" autocomplete="bday" required></label>
+  <label>Nomor WhatsApp<input name="whatsapp" type="tel" autocomplete="tel" maxlength="24" placeholder="0812…" required></label>
+  <label class="field-wide">Email<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
+  <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label>
+  <label>Konfirmasi password<input name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label>
+  <div class="field-wide"><button class="button button-primary button-block" type="submit">Daftar</button><p class="form-message" role="status" aria-live="polite"></p></div>
+</form><p>Sudah punya akun? <a href="login.html">Masuk</a></p></section></main>
+<script src="js/config.js"></script><script src="js/utils.js"></script><script src="js/api.js"></script><script src="js/auth.js"></script></body></html>
