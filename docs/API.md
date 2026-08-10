@@ -56,7 +56,10 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 | health | GET | Public | Status API/database |
 | getSchools | GET | Public | Sekolah ACTIVE, field publik saja |
 | getActiveSeason | GET | Public | Season ACTIVE dalam rentang tanggal |
-| getPublicLeaderboard | GET | Public | Maksimal 50, nama dimasking, poin VALID |
+| getLeaderboard | GET | Public | Ranking season, pagination, nama dimasking |
+| getPublicLeaderboard | GET | Public | Alias kompatibilitas untuk `getLeaderboard` |
+| getLeaderboardSeasons | GET | Public | Season ACTIVE/FINISHED/ARCHIVED yang dapat difilter |
+| getSchoolLeaderboard | GET | Public | Agregasi total/rata-rata poin dan peserta per sekolah |
 | getPublishedMaterials | GET | Public | Materi PUBLISHED |
 | getPublishedAnnouncements | GET | Public | Pengumuman ACTIVE dalam tanggal |
 | register | POST | Public/rate-limited | Registrasi STUDENT |
@@ -71,6 +74,8 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 | finishQuiz | POST | STUDENT | Finalisasi idempotent dan rekonsiliasi ledger |
 | getQuizResult | POST | STUDENT | Hasil quiz completed |
 | getMySeasonStats | POST | STUDENT | Poin dan statistik season aktif |
+| getMyRank | POST | Session | Ranking pemilik session pada season |
+| adminGetLeaderboard | POST | ADMIN/SUPERADMIN | Ranking internal dengan UserID dan status fraud |
 | adminGetUsers | POST | ADMIN/SUPERADMIN | Data user tanpa hash/salt |
 | adminGetSchools | POST | ADMIN/SUPERADMIN | Data sekolah lengkap |
 | adminCreateSchool | POST | ADMIN/SUPERADMIN | Membuat sekolah |
