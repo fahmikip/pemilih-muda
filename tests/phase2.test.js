@@ -192,6 +192,7 @@ const order = [
   "PointService.gs",
   "QuizService.gs",
   "AdminService.gs",
+  "AdminControlService.gs",
   "Router.gs",
 ];
 for (const file of order)

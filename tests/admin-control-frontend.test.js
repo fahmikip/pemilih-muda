@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('admin.html','utf8'),js=fs.readFileSync('js/admin.js','utf8'),css=fs.readFileSync('css/admin.css','utf8'),router=fs.readFileSync('gas-backend/Router.gs','utf8'),service=fs.readFileSync('gas-backend/AdminControlService.gs','utf8');
+assert(html.includes('id="admin-sidebar"')&&html.includes('id="admin-dialog"'),'layout control center harus tersedia');
+['dashboard','users','schools','seasons','questions','quiz','leaderboard','winners','rewards','materials','announcements','fraud','reports','activity','settings','admins'].forEach(x=>assert(js.includes(`'${x}'`),`menu ${x} hilang`));
+['adminDashboardStats','adminUpdateUserStatus','adminResetUserPassword','adminChangeSeasonStatus','adminAdjustPoint','adminExportReport','adminUpdateSetting','adminCreateAdmin'].forEach(x=>assert(router.includes(x),`route ${x} hilang`));
+assert(service.includes("requireRole(token,superOnly?['SUPERADMIN']:roles)"),'authorization server wajib');
+assert(service.includes('INVALID_SEASON_TRANSITION')&&service.includes('LAST_SUPERADMIN'),'guard kritis wajib');
+assert(!js.includes('.innerHTML'),'data admin tidak boleh dirender dengan innerHTML');
+assert(css.includes('@media(max-width:1000px)'),'drawer responsive wajib');
+console.log('Admin control frontend tests passed.');

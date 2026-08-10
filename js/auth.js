@@ -8,7 +8,8 @@ const Auth=(()=>{
   function getCurrentUser(){return getSession()?.user||null}
   function homeForRole(role){return role==="ADMIN"||role==="SUPERADMIN"?"admin.html":"app.html"}
   function requireLogin(){const session=getSession();if(!session){location.replace(Utils.pageUrl("login.html"));return null}return session}
-  return Object.freeze({saveSession,getSession,getSessionToken,getCurrentUser,clearSession,isLoggedIn,homeForRole,requireLogin});
+  async function enforceAvailability(){const page=document.body?.dataset.page,user=getCurrentUser();if(!user||page==='admin'||page==='login'||page==='maintenance'||user.Role==='ADMIN'||user.Role==='SUPERADMIN')return;try{const status=(await apiGet('getAppStatus')).data;if(status.maintenanceMode)location.replace(Utils.pageUrl('maintenance.html'))}catch{}}
+  return Object.freeze({saveSession,getSession,getSessionToken,getCurrentUser,clearSession,isLoggedIn,homeForRole,requireLogin,enforceAvailability});
 })();
 
 async function loadSchools(){
@@ -30,3 +31,4 @@ if(document.body.dataset.page==="login"){
   if(Auth.isLoggedIn())location.replace(Utils.pageUrl(Auth.homeForRole(Auth.getCurrentUser()?.Role)))
 }
 if(CONFIG.DEBUG)checkApiHealth().catch(()=>{});
+Auth.enforceAvailability();
