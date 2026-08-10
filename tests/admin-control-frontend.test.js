@@ -5,6 +5,9 @@ assert(html.includes('id="admin-sidebar"')&&html.includes('id="admin-dialog"'),'
 ['adminDashboardStats','adminUpdateUserStatus','adminResetUserPassword','adminChangeSeasonStatus','adminAdjustPoint','adminExportReport','adminUpdateSetting','adminCreateAdmin'].forEach(x=>assert(router.includes(x),`route ${x} hilang`));
 assert(service.includes("requireRole(token,superOnly?['SUPERADMIN']:roles)"),'authorization server wajib');
 assert(service.includes('INVALID_SEASON_TRANSITION')&&service.includes('LAST_SUPERADMIN'),'guard kritis wajib');
+assert(service.includes('Ranking:ranks[u.UserID]'),'ranking peserta wajib berasal dari data server');
+assert(service.includes('averageScore')&&service.includes('averagePoint'),'statistik quiz admin wajib tersedia');
+assert(js.includes('adminAdjustPoint')&&js.includes('duplicateQuestion'),'aksi point dan duplicate soal wajib tersedia');
 assert(!js.includes('.innerHTML'),'data admin tidak boleh dirender dengan innerHTML');
 assert(css.includes('@media(max-width:1000px)'),'drawer responsive wajib');
 console.log('Admin control frontend tests passed.');

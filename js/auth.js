@@ -25,7 +25,7 @@ document.querySelector("#register-form")?.addEventListener("submit",async event=
 
 document.querySelector("#login-form")?.addEventListener("submit",async event=>{event.preventDefault();const form=event.currentTarget,button=form.querySelector("button[type=submit]"),message=form.querySelector(".form-message");let completed=false;Utils.setButtonLoading(button,true,"Masuk…");message.textContent="";try{const result=await apiPost("login",Utils.formObject(form));Auth.saveSession(result.data);completed=true;form.reset();Utils.toast("Login berhasil.","success");location.replace(Utils.pageUrl(Auth.homeForRole(result.data.user?.Role)))}catch(error){message.textContent=Utils.errorMessage(error);Utils.toast(message.textContent,"error")}finally{if(!completed)Utils.setButtonLoading(button,false)}});
 
-if(document.body.dataset.page==="register")loadSchools();
+if(document.body.dataset.page==="register"){loadSchools();apiGet('getAppStatus').then(result=>{if(result.data.registrationOpen)return;const node=document.querySelector('[data-registration-status]');node.hidden=false;node.className='form-message text-danger';node.textContent='Pendaftaran sedang ditutup.';document.querySelector('#register-form').querySelectorAll('input,select,button').forEach(control=>control.disabled=true)}).catch(()=>{})}
 if(document.body.dataset.page==="login"){
   const params=new URLSearchParams(location.search);if(params.get("reason")==="session_expired")Utils.toast("Sesi Anda telah berakhir. Silakan masuk kembali.","error");if(params.get("registered")==="1")Utils.toast("Pendaftaran berhasil. Silakan masuk menggunakan akun Anda.","success");
   if(Auth.isLoggedIn())location.replace(Utils.pageUrl(Auth.homeForRole(Auth.getCurrentUser()?.Role)))

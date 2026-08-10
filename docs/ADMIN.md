@@ -13,12 +13,15 @@ SUPERADMIN aktif terakhir tidak dapat dinonaktifkan atau diturunkan. Password la
 ## Menu dan alur operasi
 
 - Dashboard memakai batch read untuk statistik produksi dan chart ringan tanpa data contoh.
+- Peserta menampilkan ranking berdasarkan point cache hasil rekalkulasi Point Engine; adjustment point hanya tersedia bagi SUPERADMIN dan selalu membuat transaksi `ADMIN`.
+- Challenge menampilkan jumlah peserta, started, completed, expired, rata-rata score, dan rata-rata point per filter season.
 - Tabel besar memakai pencarian, filter server, sorting whitelist, serta pagination maksimal 100 baris.
 - Season mengikuti `DRAFT → SCHEDULED → ACTIVE → FINISHED → ARCHIVED`. Hanya satu season dapat ACTIVE.
 - Soal yang tidak digunakan dinonaktifkan, bukan dihapus. Correct answer hanya tersedia lewat endpoint admin.
 - Leaderboard, winner, reward, point, dan quiz memakai service engine yang sama dengan aplikasi peserta.
 - Materi mendukung DRAFT/PUBLISHED/ARCHIVED dan pengumuman mendukung periode aktif. Konten disanitasi pada server.
 - Fraud flag harus direview manusia; sistem tidak otomatis memblokir pengguna.
+- Fraud review menggabungkan log, nama peserta, sekolah, dan fraud score melalui batch map tanpa query per baris.
 - Laporan peserta, sekolah, season, quiz, leaderboard, winner, reward, point, dan fraud diekspor CSV setelah filter dijalankan server. Browser print menyediakan Print-to-PDF.
 
 ## Endpoint
