@@ -1,1 +1,61 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#123b6d"><title>Quiz — Pemilih Muda</title><link rel="stylesheet" href="css/variables.css"><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/student.css"><link rel="stylesheet" href="css/responsive.css"></head><body data-page="quiz"><header class="quiz-header"><div class="container quiz-bar"><span class="brand"><span class="brand-mark">PM</span><span>PEMILIH MUDA</span></span><span class="quiz-timer" data-quiz-timer hidden>00:00</span></div></header><main class="quiz-main container"><section id="quiz-loading" class="skeleton-card">Menyiapkan challenge dari server…</section><section id="quiz-screen" hidden><p class="eyebrow" data-season-name>CHALLENGE</p><div class="quiz-progress-row"><strong data-question-count>SOAL — / —</strong><span data-progress-percent>0%</span></div><div class="progress-track"><span data-progress-bar></span></div><article class="question-card"><p class="eyebrow">PERTANYAAN</p><h1 data-question-text>—</h1><form id="answer-form"><div class="answer-options" data-answer-options></div><button class="button button-primary button-block" type="submit" disabled>JAWAB</button></form><div class="answer-feedback" data-answer-feedback hidden></div><button class="button button-primary button-block" data-next-question type="button" hidden>SOAL BERIKUTNYA</button></article></section><section id="quiz-result" class="result-card" hidden><p class="eyebrow">CHALLENGE SELESAI 🎉</p><h1>Kerja bagus!</h1><div class="result-grid"><div><strong data-result-correct>0</strong><span>Jawaban Benar</span></div><div><strong data-result-wrong>0</strong><span>Jawaban Salah</span></div><div><strong data-result-score>0</strong><span>Nilai</span></div><div><strong data-result-point>+0</strong><span>Point</span></div></div><p class="result-total">Total Point <strong data-result-total>0</strong></p><p class="muted">Ranking segera tersedia</p><a class="button button-primary button-block" href="app.html">KEMBALI KE DASHBOARD</a></section></main><script src="js/config.js?v=1.2.1"></script><script src="js/utils.js?v=1.2.1"></script><script src="js/api.js?v=1.2.1"></script><script src="js/auth.js?v=1.2.1"></script><script src="js/quiz.js?v=1.2.1"></script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#123b6d">
+  <title>Quiz — Pemilih Muda</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/student.css?v=1.4.0">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="quiz">
+  <header class="quiz-header"><div class="container quiz-bar"><span class="brand"><span class="brand-mark">PM</span><span>PEMILIH MUDA</span></span><span class="quiz-timer" data-quiz-timer hidden>00:00</span></div></header>
+  <main class="quiz-main container">
+    <section id="quiz-loading" class="skeleton-card">Menyiapkan paket challenge dari server…</section>
+
+    <section id="quiz-screen" hidden>
+      <div class="quiz-heading"><p class="eyebrow" data-season-name>CHALLENGE</p><button class="button button-ghost button-small" data-open-navigator type="button">DAFTAR SOAL</button></div>
+      <div class="quiz-progress-row"><strong data-question-count>SOAL — / —</strong><span data-progress-percent>0%</span></div>
+      <div class="progress-track"><span data-progress-bar></span></div>
+      <article class="question-card">
+        <p class="eyebrow">PERTANYAAN</p>
+        <h1 data-question-text>—</h1>
+        <div class="answer-options" data-answer-options></div>
+        <div class="quiz-navigation">
+          <button class="button button-ghost" data-previous type="button">← SEBELUMNYA</button>
+          <button class="button button-primary" data-next type="button">BERIKUTNYA →</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="quiz-review" class="review-card" hidden>
+      <p class="eyebrow">REVIEW CHALLENGE</p>
+      <h1>Periksa jawabanmu</h1>
+      <p><strong data-review-answered>0</strong> sudah dijawab · <strong data-review-unanswered>0</strong> belum dijawab</p>
+      <div class="question-navigator review-navigator" data-review-navigator></div>
+      <p class="review-warning" data-review-warning hidden></p>
+      <div class="review-actions">
+        <button class="button button-ghost" data-return-question type="button">KEMBALI KE SOAL</button>
+        <button class="button button-primary" data-check-unanswered type="button" hidden>PERIKSA SOAL BELUM DIJAWAB</button>
+        <button class="button button-primary" data-submit-quiz type="button">KIRIM JAWABAN</button>
+      </div>
+    </section>
+
+    <section id="quiz-result" class="result-card" hidden>
+      <p class="eyebrow">CHALLENGE SELESAI 🎉</p><h1>Kerja bagus!</h1>
+      <div class="result-grid"><div><strong data-result-correct>0</strong><span>Jawaban Benar</span></div><div><strong data-result-wrong>0</strong><span>Jawaban Salah</span></div><div><strong data-result-score>0</strong><span>Nilai</span></div><div><strong data-result-point>+0</strong><span>Point</span></div><div><strong data-result-bonus>+0</strong><span>Bonus</span></div></div>
+      <p class="result-total">Total Point <strong data-result-total>0</strong></p>
+      <div class="result-explanations" data-result-explanations hidden></div>
+      <a class="button button-primary button-block" href="app.html">KEMBALI KE DASHBOARD</a>
+    </section>
+  </main>
+
+  <dialog class="navigator-dialog" data-navigator-dialog><div class="navigator-dialog-head"><strong>DAFTAR SOAL</strong><button class="button button-ghost" data-close-navigator type="button">TUTUP</button></div><div class="question-navigator" data-question-navigator></div></dialog>
+  <dialog class="confirm-dialog" data-confirm-dialog><h2>Jawaban belum lengkap</h2><p data-confirm-message></p><div class="review-actions"><button class="button button-ghost" data-cancel-submit type="button">BATAL</button><button class="button button-primary" data-confirm-submit type="button">YA, KIRIM</button></div></dialog>
+
+  <script src="js/config.js?v=1.4.0"></script><script src="js/utils.js?v=1.2.1"></script><script src="js/api.js?v=1.2.1"></script><script src="js/auth.js?v=1.2.1"></script><script src="js/quiz.js?v=1.4.0"></script>
+</body>
+</html>
