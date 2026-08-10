@@ -187,7 +187,8 @@ const order = [
   "AuthService.gs",
   "SchoolService.gs",
   "ApiService.gs",
-  "LeaderboardService.gs",
+    "LeaderboardService.gs",
+    "WinnerService.gs",
   "PointService.gs",
   "QuizService.gs",
   "AdminService.gs",
@@ -1144,6 +1145,16 @@ console.log("Phase 6 batch quiz tests passed.");
   assert.ok(adminRank.data.entries[0].userId);
   assert.equal(JSON.stringify(adminRank).includes("PasswordHash"), false);
   console.log(`Phase 7 leaderboard tests passed (${initialLeaderboardReads} initial sheet reads).`);
+  assert.equal(call("POST","adminPrepareSeasonFinalization",{seasonId:rankSeason.SeasonID},studentToken).code,"FORBIDDEN");
+  const winnerPreview=call("POST","adminPrepareSeasonFinalization",{seasonId:rankSeason.SeasonID},adminToken);assert.equal(winnerPreview.success,true);assert.equal(winnerPreview.data.candidate.userId,rankA);assert.equal(winnerPreview.data.candidate.point,100);assert.equal(winnerPreview.data.status,"NORMAL");
+  const disqualified=call("POST","adminDisqualifyCandidate",{seasonId:rankSeason.SeasonID,userId:rankA,reason:"Pelanggaran terverifikasi"},adminToken);assert.equal(disqualified.success,true);assert.equal(disqualified.data.next.candidate.userId,rankB);
+  const finalized=call("POST","adminFinalizeWinner",{seasonId:rankSeason.SeasonID,userId:rankB},adminToken);assert.equal(finalized.success,true);assert.equal(finalized.data.winner.userId,rankB);assert.equal(finalized.data.reward.Status,"WAITING");const winnerId=finalized.data.winner.winnerId,rewardId=finalized.data.reward.RewardID;
+  const finalizedAgain=call("POST","adminFinalizeWinner",{seasonId:rankSeason.SeasonID,userId:rankB},adminToken);assert.equal(finalizedAgain.success,true);assert.equal(finalizedAgain.data.winner.winnerId,winnerId);assert.equal(context.DatabaseService.getAllRows("Winners").filter(row=>row.SeasonID===rankSeason.SeasonID&&["PENDING_REVIEW","VALIDATED","PUBLISHED"].includes(row.Status)).length,1);assert.equal(context.DatabaseService.getAllRows("Rewards").filter(row=>row.WinnerID===winnerId).length,1);
+  const verified=call("POST","adminVerifyWinner",{winnerId,destinationNumber:"081200000002",provider:"Telco",notes:"Identitas sesuai"},adminToken);assert.equal(verified.success,true);assert.equal(verified.data.winner.status,"VALIDATED");assert.equal(verified.data.reward.Status,"VERIFIED");assert.equal(call("POST","adminUpdateRewardStatus",{rewardId,status:"SENT",notes:"Dikirim manual"},adminToken).data.Status,"SENT");assert.equal(call("POST","adminUpdateRewardStatus",{rewardId,status:"COMPLETED",notes:"Diterima peserta"},adminToken).data.Status,"COMPLETED");assert.equal(call("POST","adminUpdateRewardStatus",{rewardId,status:"WAITING"},adminToken).code,"INVALID_REWARD_TRANSITION");
+  const published=call("POST","adminPublishWinner",{winnerId},adminToken);assert.equal(published.success,true);const publicWinner=call("GET","getPublishedWinner",{seasonId:rankSeason.SeasonID});assert.equal(publicWinner.data.winnerName,"Budi S.");assert.equal(publicWinner.data.point,70);assert.equal(/DestinationNumber|WhatsApp|Email|NIS|FraudScore/.test(JSON.stringify(publicWinner)),false);assert.equal(call("GET","getWinnerHistory").data.length,1);
+  const tieSeason={...rankSeason,SeasonID:"SEA_WIN_TIE",Name:"Season Full Tie"};context.DatabaseService.insert("Seasons",tieSeason);context.DatabaseService.insertMany("PointTransactions",[{PointID:"PNT_TIE_B",UserID:rankB,SeasonID:tieSeason.SeasonID,SourceType:"ADMIN",SourceID:"TIE_B",Point:100,Status:"VALID",CreatedAt:context.nowIso_(),CreatedBy:"SYSTEM"},{PointID:"PNT_TIE_C",UserID:rankC,SeasonID:tieSeason.SeasonID,SourceType:"ADMIN",SourceID:"TIE_C",Point:100,Status:"VALID",CreatedAt:context.nowIso_(),CreatedBy:"SYSTEM"}]);context.DatabaseService.insertMany("QuizSessions",[{SessionID:"QZS_TIE_B",UserID:rankB,SeasonID:tieSeason.SeasonID,Correct:20,Score:80,Attempt:1,Status:"COMPLETED",QuestionIDs:"[]",CreatedAt:context.nowIso_(),UpdatedAt:context.nowIso_()},{SessionID:"QZS_TIE_C",UserID:rankC,SeasonID:tieSeason.SeasonID,Correct:20,Score:80,Attempt:1,Status:"COMPLETED",QuestionIDs:"[]",CreatedAt:context.nowIso_(),UpdatedAt:context.nowIso_()}]);context.invalidateLeaderboardCache_(tieSeason.SeasonID);const tiePreview=call("POST","adminPrepareSeasonFinalization",{seasonId:tieSeason.SeasonID},adminToken);assert.equal(tiePreview.data.status,"NEED_REVIEW");assert.equal(tiePreview.data.candidates.length,2);assert.equal(call("POST","adminFinalizeWinner",{seasonId:tieSeason.SeasonID,userId:rankB},adminToken).code,"VALIDATION_ERROR");
+  const emptySeason={...rankSeason,SeasonID:"SEA_WIN_EMPTY",Name:"Season Empty"};context.DatabaseService.insert("Seasons",emptySeason);assert.equal(call("POST","adminPrepareSeasonFinalization",{seasonId:emptySeason.SeasonID},adminToken).data.status,"NO_VALID_WINNER");assert.equal(call("POST","adminPrepareSeasonFinalization",{seasonId:"SEA_DEMO_202608"},adminToken).code,"SEASON_NOT_FINISHED");
+  const auditActions=context.DatabaseService.getAllRows("ActivityLogs").map(row=>row.Action);["PREPARE_FINALIZATION","DISQUALIFY_CANDIDATE","FINALIZE_WINNER","VERIFY_WINNER","UPDATE_REWARD","PUBLISH_WINNER"].forEach(action=>assert.ok(auditActions.includes(action)));console.log("Phase 8 winner and reward tests passed.");
 }
 assert.equal(call("POST", "logout", {}, studentToken).success, true);
 assert.equal(

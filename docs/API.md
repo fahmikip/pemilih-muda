@@ -60,6 +60,8 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 | getPublicLeaderboard | GET | Public | Alias kompatibilitas untuk `getLeaderboard` |
 | getLeaderboardSeasons | GET | Public | Season ACTIVE/FINISHED/ARCHIVED yang dapat difilter |
 | getSchoolLeaderboard | GET | Public | Agregasi total/rata-rata poin dan peserta per sekolah |
+| getPublishedWinner | GET | Public | Pemenang PUBLISHED tanpa data pribadi |
+| getWinnerHistory | GET | Public | Riwayat pemenang yang telah dipublikasikan |
 | getPublishedMaterials | GET | Public | Materi PUBLISHED |
 | getPublishedAnnouncements | GET | Public | Pengumuman ACTIVE dalam tanggal |
 | register | POST | Public/rate-limited | Registrasi STUDENT |
@@ -76,6 +78,12 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 | getMySeasonStats | POST | STUDENT | Poin dan statistik season aktif |
 | getMyRank | POST | Session | Ranking pemilik session pada season |
 | adminGetLeaderboard | POST | ADMIN/SUPERADMIN | Ranking internal dengan UserID dan status fraud |
+| adminPrepareSeasonFinalization | POST | ADMIN/SUPERADMIN | Preview kandidat tanpa menulis winner |
+| adminDisqualifyCandidate | POST | ADMIN/SUPERADMIN | Diskualifikasi kandidat dengan alasan |
+| adminFinalizeWinner | POST | ADMIN/SUPERADMIN | Snapshot winner dan reward secara idempotent |
+| adminVerifyWinner | POST | ADMIN/SUPERADMIN | Verifikasi identitas dan tujuan hadiah |
+| adminUpdateRewardStatus | POST | ADMIN/SUPERADMIN | Transisi status reward tervalidasi |
+| adminPublishWinner | POST | ADMIN/SUPERADMIN | Publikasi winner VALIDATED |
 | adminGetUsers | POST | ADMIN/SUPERADMIN | Data user tanpa hash/salt |
 | adminGetSchools | POST | ADMIN/SUPERADMIN | Data sekolah lengkap |
 | adminCreateSchool | POST | ADMIN/SUPERADMIN | Membuat sekolah |

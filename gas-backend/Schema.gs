@@ -41,6 +41,6 @@ var DATABASE_ENUMS = Object.freeze({
   SchoolStatus:['ACTIVE','INACTIVE'], SeasonStatus:['DRAFT','SCHEDULED','ACTIVE','FINISHED','ARCHIVED'],
   Difficulty:['EASY','MEDIUM','HARD'], QuestionStatus:['ACTIVE','INACTIVE'],
   QuizStatus:['STARTED','COMPLETED','EXPIRED','INVALID'], PointSource:['QUIZ','BONUS','ACHIEVEMENT','ADMIN','PENALTY'],
-  PointStatus:['VALID','INVALID','REVERSED'], RewardStatus:['WAITING','VERIFIED','SENT','COMPLETED'],
+  PointStatus:['VALID','INVALID','REVERSED'], RewardStatus:['WAITING','VERIFIED','SENT','COMPLETED','FAILED'],
   SessionStatus:['ACTIVE','EXPIRED','REVOKED']
 });

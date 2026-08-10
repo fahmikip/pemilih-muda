@@ -8,4 +8,5 @@ const PrivatePage=(()=>{
   return Object.freeze({init,logout});
 })();
 document.querySelectorAll("[data-logout]").forEach(button=>button.addEventListener("click",()=>PrivatePage.logout(button)));PrivatePage.init();
+apiGet("getPublishedWinner").then(response=>{const winner=response.data;if(!winner)return;const banner=document.querySelector("[data-winner-banner]");if(!banner)return;if(winner.status==="VERIFYING"){Utils.setText("[data-winner-name]","Sedang dalam proses verifikasi");Utils.setText("[data-winner-detail]",winner.seasonName||"Hasil season sedang ditinjau admin.")}else{Utils.setText("[data-winner-name]",winner.winnerName);Utils.setText("[data-winner-detail]",`${winner.schoolName} · ${new Intl.NumberFormat("id-ID").format(Number(winner.point||0))} Point · ${winner.rewardName}`)}banner.hidden=false}).catch(()=>{});
 if(CONFIG.DEBUG)checkApiHealth().catch(()=>{});

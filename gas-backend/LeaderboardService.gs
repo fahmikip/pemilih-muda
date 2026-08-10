@@ -12,7 +12,7 @@ var LeaderboardService=(function(){
   function publicEntry_(row){return{rank:row.rank,name:maskLeaderboardName_(row.name),schoolName:row.schoolName,point:row.point,correctAnswers:row.correctAnswers,quizCompleted:row.quizCompleted,averageScore:row.averageScore};}
   function resolveLeaderboardSeason_(seasonId){var seasons=DatabaseService.getAllRows('Seasons'),id=sanitizeText_(seasonId||'',40,'SeasonID'),season=id?seasons.filter(function(row){return row.SeasonID===id;})[0]:findPlayableSeasons_()[0];if(!season&&!id)season=seasons.filter(function(row){return row.Status==='FINISHED'||row.Status==='ARCHIVED';}).sort(function(a,b){return dateEnd_(b.EndDate)-dateEnd_(a.EndDate);})[0];if(!season)throw new AppError('Season tidak ditemukan.','NO_ACTIVE_SEASON');if(['ACTIVE','FINISHED','ARCHIVED'].indexOf(season.Status)<0)throw new AppError('Leaderboard season belum tersedia.','QUIZ_NOT_AVAILABLE');return season;}
   function publicLeaderboardSeason_(row){return{seasonId:row.SeasonID,name:row.Name,status:row.Status,startDate:row.StartDate,endDate:row.EndDate};}
-  return Object.freeze({getLeaderboard:getLeaderboard,getMyRank:getMyRank,getSchoolLeaderboard:getSchoolLeaderboard,getSeasons:getSeasons,getAdminLeaderboard:getAdminLeaderboard});
+  return Object.freeze({getLeaderboard:getLeaderboard,getMyRank:getMyRank,getSchoolLeaderboard:getSchoolLeaderboard,getSeasons:getSeasons,getAdminLeaderboard:getAdminLeaderboard,buildSeasonLeaderboard:buildSeasonLeaderboard_});
 })();
 
 function maskLeaderboardName_(name){var parts=String(name||'').trim().split(/\s+/).filter(Boolean);if(!parts.length)return'Peserta';return parts[0]+parts.slice(1).map(function(part){return' '+part.charAt(0).toUpperCase()+'.';}).join('');}
