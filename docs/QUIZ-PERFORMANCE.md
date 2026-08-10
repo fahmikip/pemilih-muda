@@ -30,3 +30,9 @@ Test yang sama memverifikasi submit normal, double submit, opsi manipulatif, res
 Google Apps Script tetap memiliki cold start, redirect ContentService, latency jaringan, dan quota Spreadsheet/Cache. Lookup jawaban masih harus membaca data QuizAnswers dari source of truth di dalam lock untuk menjaga proteksi double-submit; data lalu difilter berdasarkan `SessionID` dan dibentuk menjadi lookup set. Target 500–800 ms hanya dapat divalidasi dari Execution log deployment nyata dan bukan jaminan konstan.
 
 Tidak ada service worker pada versi repository ini. Semua fetch API sudah menggunakan `cache: "no-store"`, sehingga response quiz privat tidak masuk cache browser/service worker.
+
+## Arsitektur batch v1.4.0
+
+Quiz aktif sekarang hanya memerlukan dua request utama: satu `startQuiz` yang membawa seluruh paket snapshot dan satu `submitQuiz` setelah review. Pemilihan jawaban, previous/next, navigator, dan review menghasilkan nol request. Draft lokal memakai key `quiz_draft_<QuizSessionID>` dan hanya menyimpan `{quizSessionId, answers, currentIndex}`; draft dihapus setelah submit sukses.
+
+Pada harness lokal, submit 25 jawaban sekaligus selesai dalam 12 ms dengan 13 pembacaan dan 8 penulisan total lintas seluruh proses finalisasi. Seluruh 25 row `QuizAnswers` dipastikan menggunakan tepat satu batch write. Angka ini bukan latency jaringan GAS. Pengujian juga mencakup paket tanpa answer key, jawaban kosong, option/question manipulatif, duplicate payload, kepemilikan session, expiry, dan retry idempotent.

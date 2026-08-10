@@ -66,7 +66,8 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 | getQuizStatus | POST | STUDENT | Status attempt/start/resume season aktif |
 | startQuiz | POST | STUDENT | Membuat atau melanjutkan snapshot quiz |
 | getCurrentQuestion | POST | STUDENT | Mengambil satu soal belum dijawab |
-| submitAnswer | POST | STUDENT | Validasi, simpan, progres, dan soal/hasil berikutnya dalam satu respons |
+| submitAnswer | POST | STUDENT | Deprecated; kompatibilitas client lama |
+| submitQuiz | POST | STUDENT | Validasi dan simpan seluruh draft jawaban dalam satu batch |
 | finishQuiz | POST | STUDENT | Finalisasi idempotent dan rekonsiliasi ledger |
 | getQuizResult | POST | STUDENT | Hasil quiz completed |
 | getMySeasonStats | POST | STUDENT | Poin dan statistik season aktif |
@@ -80,7 +81,7 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 
 Quiz request hanya mengirim ID session/question/option. Nilai, jumlah benar/salah, poin, UserID, attempt, dan status tidak diterima sebagai nilai terpercaya. `QuestionIDs` menjadi snapshot session. Opsi diacak stabil menggunakan mapping server yang diberi secret dari Script Properties; response soal tidak memuat `CorrectAnswer` atau mapping asli.
 
-Flow baru: `getQuizStatus` → `startQuiz` (juga resume) → `submitAnswer` per soal. Setiap `submitAnswer` mengembalikan `result`, `progress`, `nextQuestion`, dan `completed`; karena itu frontend tidak memanggil `getCurrentQuestion` setelah submit pada backend versi ini. `getCurrentQuestion` tetap tersedia untuk resume dan kompatibilitas deployment lama. Jawaban terakhir langsung difinalisasi dan mengembalikan hasil quiz. Timer berasal dari `StartedAt` dan `QuizDuration` server. Satu kombinasi session+question hanya menerima satu jawaban VALID. Ledger memakai `SourceType=QUIZ`, `SourceID=QuizSessionID`; bonus sempurna memakai `SourceType=BONUS`. Retry finish/result merekonsiliasi transaksi hilang tanpa menggandakan transaksi VALID.
+Flow aktif halaman quiz: satu `startQuiz` → navigasi dan draft lokal → review → satu `submitQuiz`. `startQuiz` dan resume mengembalikan paket seluruh soal dari snapshot session yang sama; bila attempt sudah selesai, endpoint yang sama mengembalikan hasil existing. Frontend tidak memanggil API saat memilih jawaban, membuka navigator, previous/next, atau review. Timer berasal dari `StartedAt` dan `QuizDuration` server. `getQuizStatus` tetap digunakan dashboard, sedangkan `submitAnswer` dan `getCurrentQuestion` menjadi endpoint deprecated untuk client lama dan tidak digunakan frontend v1.4.0.
 
 Respons submit non-final:
 
@@ -89,6 +90,16 @@ Respons submit non-final:
 ```
 
 `nextQuestion` tidak pernah memuat `CorrectAnswer`, status benar, atau penjelasan. Penjelasan jawaban saat ini hanya dikirim bila `ShowExplanation` aktif. Jika `completed=true`, `result` berisi hasil final dan `nextQuestion` bernilai `null`.
+
+Paket `startQuiz` berisi `quizSessionId`, season publik, `startedAt`, `expiresAt`, `remainingSeconds`, dan `questions[]`. Setiap pertanyaan hanya berisi ID, nomor, teks, kategori, serta opsi `{id,label,text}`. ID opsi bersifat opaque dan mapping ke A–D asli hanya dapat diselesaikan server.
+
+Payload batch:
+
+```json
+{"quizSessionId":"QZS_xxx","answers":[{"questionId":"QUE_xxx","selectedOptionId":"opt_xxx"}]}
+```
+
+Jawaban kosong boleh tidak dimasukkan dan dihitung salah. `submitQuiz` menolak question di luar snapshot, option ID modifikasi, dan question duplikat. Semua jawaban ditulis dengan satu `setValues`; score, poin, bonus, ledger, dan total poin dihitung server-side. Retry setelah session COMPLETED mengembalikan hasil yang sudah ada tanpa menggandakan jawaban atau poin.
 
 ## Contoh payload
 

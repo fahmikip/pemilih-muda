@@ -13,6 +13,7 @@ var API_ROUTES = Object.freeze({
   startQuiz:{method:'POST',handler:function(request){return QuizService.start(request.token,request.payload,request);}},
   getCurrentQuestion:{method:'POST',handler:function(request){return QuizService.getCurrentQuestion(request.token,request.payload);}},
   submitAnswer:{method:'POST',handler:function(request){return QuizService.submitAnswer(request.token,request.payload);}},
+  submitQuiz:{method:'POST',handler:function(request){return QuizService.submitQuiz(request.token,request.payload);}},
   finishQuiz:{method:'POST',handler:function(request){return QuizService.finish(request.token,request.payload);}},
   getQuizResult:{method:'POST',handler:function(request){return QuizService.getResult(request.token,request.payload);}},
   getMySeasonStats:{method:'POST',handler:function(request){return QuizService.getMySeasonStats(request.token,request.payload);}},
