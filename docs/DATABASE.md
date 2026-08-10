@@ -69,5 +69,6 @@ After setup, `seedDemoData()` inserts five schools, thirty questions, one active
 | INITIAL_ADMIN_NAME | Required only to create admin | Display name. |
 | INITIAL_ADMIN_EMAIL | Required only to create admin | Normalized lowercase and checked for duplicate. |
 | INITIAL_ADMIN_PASSWORD | Required only to create admin | Minimum 12 characters; deleted from Script Properties after successful creation. |
+| QUIZ_OPTION_SECRET | Automatic | Secret untuk opaque option ID/order; dibuat otomatis saat quiz pertama dan tidak boleh diekspos. |
 
 Passwords use a random 64-hex-character salt and 1,000 iterative SHA-256 digests available in Apps Script. Hash comparison avoids early exit. This is materially better than plaintext but is not a memory-hard password KDF such as Argon2/bcrypt; access to the spreadsheet and Apps Script project must therefore be tightly restricted. Hash and salt must never enter API responses.

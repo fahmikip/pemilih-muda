@@ -7,3 +7,7 @@ Admin bootstrap membaca credential sementara dari Script Properties. Password mi
 ## Session browser
 
 Frontend menyimpan hanya token, expiry, dan snapshot user publik minimum (`UserID`, nama, `SchoolID`, role, status) di `sessionStorage`. Password, hash, salt, poin, FraudScore, dan data profil privat tidak disimpan. `sessionStorage` mengurangi persistensi dibanding `localStorage`, tetapi token tetap dapat dicuri bila terjadi XSS atau perangkat/tab dikuasai pihak lain. Karena itu aplikasi menghindari script pihak ketiga, merender data API sebagai text/escaped HTML, memvalidasi token dan role kembali di server, serta mencabut token saat logout. Snapshot role hanya dipakai untuk navigasi; `getProfile` dan setiap endpoint admin tetap menjadi pemeriksaan server-side.
+
+## Quiz trust boundary
+
+Frontend hanya mengirim session ID, question ID, dan opaque option ID. Pemilihan soal, snapshot, mapping pilihan, CorrectAnswer, point per question, score, bonus, total, attempt, expiry, dan ledger ditentukan server. `QUIZ_OPTION_SECRET` membuat mapping opsi stabil untuk resume namun tidak dapat dihitung dari source publik. Jawaban memakai uniqueness logis `QuizSessionID + QuestionID` di dalam ScriptLock. Finalisasi memeriksa transaksi VALID berdasarkan type/source dan merekonsiliasi ledger setelah partial failure tanpa double award.

@@ -10,7 +10,7 @@ Platform edukasi dan kuis pemilih pemula yang netral, nonpartisan, dan mobile-fi
 
 ## Status
 
-Phase 1–4 selesai: foundation, database setup, backend API, serta integrasi frontend untuk health, sekolah, season, registrasi, login, session, profil, dan logout. Quiz Engine belum diaktifkan.
+Phase 1–5 selesai: foundation, database, backend API, authentication, season, Quiz Engine, resume, timer server, hasil, dan ledger poin idempotent. Leaderboard dan Winner Engine belum dimulai.
 
 ## Konfigurasi deployment
 
