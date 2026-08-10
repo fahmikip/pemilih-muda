@@ -18,7 +18,7 @@ Buka dengan Safari, tekan **CARA PASANG**, kemudian Share → Add to Home Screen
 
 ## Service worker dan cache
 
-Cache shell bernama `pemilih-muda-shell-2.1.0`. Install menyimpan landing, offline fallback, CSS/JS inti, manifest, dan ikon. Activate menghapus cache Pemilih Muda versi lama. Navigasi memakai network-first dengan `offline.html` sebagai fallback.
+Cache shell bernama `pemilih-muda-shell-2.2.0`. Install menyimpan landing, offline fallback, CSS/JS inti, manifest, dan ikon. Activate menghapus cache Pemilih Muda versi lama. Navigasi memakai network-first dengan `offline.html` sebagai fallback.
 
 Google Apps Script berbeda origin dengan GitHub Pages. Service worker segera melewati seluruh request cross-origin sehingga login, register, session token, profile, quiz package, jawaban, ranking privat, winner/reward admin, dan semua response admin selalu **network-only** dan tidak pernah ditulis ke Cache Storage. Request POST juga tidak pernah diintersep.
 
