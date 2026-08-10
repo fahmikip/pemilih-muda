@@ -28,6 +28,7 @@ var API_ROUTES = Object.freeze({
 function routeRequest_(method,e){
   var request;
   try{
+    DatabaseService.beginRequest();
     request=parseApiRequest_(method,e); var route=API_ROUTES[request.action];
     if(!route||route.method!==method)throw new AppError('Action API tidak ditemukan.','API_ACTION_NOT_FOUND');
     return jsonResponse(route.handler(request));
