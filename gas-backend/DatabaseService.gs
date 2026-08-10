@@ -1,39 +1,56 @@
 var DatabaseService = (function () {
   var lockDepth = 0;
+  var spreadsheetCache = null;
+  var sheetCache = {};
+  var headersCache = {};
+  var rowsCache = {};
+  function beginRequest() {
+    // Row data is request-scoped. GAS may reuse a warm execution context, so
+    // explicitly discard it before routing a new HTTP request.
+    rowsCache = {};
+  }
   function getSpreadsheet() {
+    if (spreadsheetCache) return spreadsheetCache;
     var properties = PropertiesService.getScriptProperties();
     var id = properties.getProperty('DATABASE_SPREADSHEET_ID');
     if (id) {
-      try { return SpreadsheetApp.openById(id); }
+      try { spreadsheetCache = SpreadsheetApp.openById(id); return spreadsheetCache; }
       catch (error) { throw new Error('DATABASE_SPREADSHEET_ID tidak valid atau tidak dapat diakses: ' + error.message); }
     }
     var spreadsheet = SpreadsheetApp.create(APP_CONFIG.NAME + ' Database');
     properties.setProperty('DATABASE_SPREADSHEET_ID', spreadsheet.getId());
-    return spreadsheet;
+    spreadsheetCache = spreadsheet; return spreadsheetCache;
   }
 
   function getSheet(sheetName) {
     assertKnownSheet_(sheetName);
+    if (sheetCache[sheetName]) return sheetCache[sheetName];
     var sheet = getSpreadsheet().getSheetByName(sheetName);
     if (!sheet) throw new Error('Sheet belum tersedia: ' + sheetName + '. Jalankan setupApplication().');
-    return sheet;
+    sheetCache[sheetName] = sheet; return sheet;
   }
 
   function getHeaders(sheetName) {
+    if (headersCache[sheetName]) return headersCache[sheetName].slice();
     var sheet = getSheet(sheetName);
     var lastColumn = sheet.getLastColumn();
     if (!lastColumn) return [];
-    return sheet.getRange(1, 1, 1, lastColumn).getValues()[0].map(function (value) { return String(value).trim(); });
+    headersCache[sheetName] = sheet.getRange(1, 1, 1, lastColumn).getValues()[0].map(function (value) { return String(value).trim(); });
+    return headersCache[sheetName].slice();
   }
 
   function getAllRows(sheetName) {
+    if (rowsCache[sheetName]) return rowsCache[sheetName].slice();
     var sheet = getSheet(sheetName);
     var values = sheet.getDataRange().getValues();
-    if (values.length < 2) return [];
+    if (values.length < 2) { rowsCache[sheetName] = []; return []; }
     var headers = values[0].map(String);
-    return values.slice(1).filter(function (row) { return row.some(function (value) { return value !== ''; }); })
+    rowsCache[sheetName] = values.slice(1).filter(function (row) { return row.some(function (value) { return value !== ''; }); })
       .map(function (row) { return rowToObject_(headers, row); });
+    return rowsCache[sheetName].slice();
   }
+
+  function refreshRows(sheetName) { delete rowsCache[sheetName]; return getAllRows(sheetName); }
 
   function findMany(sheetName, field, value) {
     assertField_(sheetName, field);
@@ -53,6 +70,7 @@ var DatabaseService = (function () {
       var headers = getHeaders(sheetName);
       var rows = objects.map(function (object) { return headers.map(function (header) { return normalizeCellValue_(object[header]); }); });
       sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, headers.length).setValues(rows);
+      if (rowsCache[sheetName]) rowsCache[sheetName] = rowsCache[sheetName].concat(objects);
       return objects;
     });
   }
@@ -72,6 +90,7 @@ var DatabaseService = (function () {
           if (columnIndex >= 0 && field !== idField) values[rowIndex][columnIndex] = normalizeCellValue_(data[field]);
         });
         sheet.getRange(rowIndex + 1, 1, 1, headers.length).setValues([values[rowIndex]]);
+        if (rowsCache[sheetName]) rowsCache[sheetName].forEach(function (row) { if (comparable_(row[idField]) === comparable_(idValue)) Object.keys(data).forEach(function (field) { if (field !== idField && headers.indexOf(field) >= 0) row[field] = normalizeCellValue_(data[field]); }); });
         return true;
       }
       return false;
@@ -93,6 +112,7 @@ var DatabaseService = (function () {
       });
       if (!deleted) return false;
       rewriteData_(sheet, kept);
+      delete rowsCache[sheetName];
       return true;
     });
   }
@@ -105,6 +125,7 @@ var DatabaseService = (function () {
         return headers.map(function (header) { return normalizeCellValue_(object[header]); });
       }));
       rewriteData_(sheet, values);
+      rowsCache[sheetName] = rows.slice();
       return rows.length;
     });
   }
@@ -127,5 +148,5 @@ var DatabaseService = (function () {
     try { return callback(); } finally { lockDepth--; lock.releaseLock(); }
   }
 
-  return Object.freeze({getSpreadsheet:getSpreadsheet,getSheet:getSheet,getHeaders:getHeaders,getAllRows:getAllRows,findById:findById,findOne:findOne,findMany:findMany,insert:insert,insertMany:insertMany,updateById:updateById,deleteById:deleteById,exists:exists,replaceRows:replaceRows,withLock:withScriptLock_});
+  return Object.freeze({beginRequest:beginRequest,getSpreadsheet:getSpreadsheet,getSheet:getSheet,getHeaders:getHeaders,getAllRows:getAllRows,refreshRows:refreshRows,findById:findById,findOne:findOne,findMany:findMany,insert:insert,insertMany:insertMany,updateById:updateById,deleteById:deleteById,exists:exists,replaceRows:replaceRows,withLock:withScriptLock_});
 })();

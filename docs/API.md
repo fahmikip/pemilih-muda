@@ -66,7 +66,7 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 | getQuizStatus | POST | STUDENT | Status attempt/start/resume season aktif |
 | startQuiz | POST | STUDENT | Membuat atau melanjutkan snapshot quiz |
 | getCurrentQuestion | POST | STUDENT | Mengambil satu soal belum dijawab |
-| submitAnswer | POST | STUDENT | Validasi opsi dan simpan jawaban server-side |
+| submitAnswer | POST | STUDENT | Validasi, simpan, progres, dan soal/hasil berikutnya dalam satu respons |
 | finishQuiz | POST | STUDENT | Finalisasi idempotent dan rekonsiliasi ledger |
 | getQuizResult | POST | STUDENT | Hasil quiz completed |
 | getMySeasonStats | POST | STUDENT | Poin dan statistik season aktif |
@@ -80,7 +80,15 @@ Sukses: `{"success":true,"message":"Success","data":{}}`. Gagal: `{"success":fal
 
 Quiz request hanya mengirim ID session/question/option. Nilai, jumlah benar/salah, poin, UserID, attempt, dan status tidak diterima sebagai nilai terpercaya. `QuestionIDs` menjadi snapshot session. Opsi diacak stabil menggunakan mapping server yang diberi secret dari Script Properties; response soal tidak memuat `CorrectAnswer` atau mapping asli.
 
-Flow: `getQuizStatus` → `startQuiz` (juga resume) → `getCurrentQuestion` → `submitAnswer` per soal → finalisasi otomatis/`finishQuiz` → `getQuizResult`/`getMySeasonStats`. Timer berasal dari `StartedAt` dan `QuizDuration` server. Satu kombinasi session+question hanya menerima satu jawaban VALID. Ledger memakai `SourceType=QUIZ`, `SourceID=QuizSessionID`; bonus sempurna memakai `SourceType=BONUS`. Retry finish/result merekonsiliasi transaksi hilang tanpa menggandakan transaksi VALID.
+Flow baru: `getQuizStatus` → `startQuiz` (juga resume) → `submitAnswer` per soal. Setiap `submitAnswer` mengembalikan `result`, `progress`, `nextQuestion`, dan `completed`; karena itu frontend tidak memanggil `getCurrentQuestion` setelah submit pada backend versi ini. `getCurrentQuestion` tetap tersedia untuk resume dan kompatibilitas deployment lama. Jawaban terakhir langsung difinalisasi dan mengembalikan hasil quiz. Timer berasal dari `StartedAt` dan `QuizDuration` server. Satu kombinasi session+question hanya menerima satu jawaban VALID. Ledger memakai `SourceType=QUIZ`, `SourceID=QuizSessionID`; bonus sempurna memakai `SourceType=BONUS`. Retry finish/result merekonsiliasi transaksi hilang tanpa menggandakan transaksi VALID.
+
+Respons submit non-final:
+
+```json
+{"success":true,"data":{"completed":false,"result":{"accepted":true,"isCorrect":true,"point":10},"progress":{"answered":5,"total":25,"percent":20},"nextQuestion":{"questionId":"QUE_xxx","question":"...","options":[]}}}
+```
+
+`nextQuestion` tidak pernah memuat `CorrectAnswer`, status benar, atau penjelasan. Penjelasan jawaban saat ini hanya dikirim bila `ShowExplanation` aktif. Jika `completed=true`, `result` berisi hasil final dan `nextQuestion` bernilai `null`.
 
 ## Contoh payload
 
