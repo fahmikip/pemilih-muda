@@ -9,8 +9,8 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "portrait-primary",
-  "background_color": "#f3f6fa",
-  "theme_color": "#0b356b",
+  "background_color": "#f8f5ef",
+  "theme_color": "#7b1e2d",
   "categories": ["education", "government"],
   "icons": [
     {"src":"icons/icon-72.png","sizes":"72x72","type":"image/png","purpose":"any"},

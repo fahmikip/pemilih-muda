@@ -4,6 +4,6 @@ for(const marker of ['PORTAL EDUKASI PUBLIK','PROGRAM LITERASI DEMOKRASI','Prins
 assert(html.includes('AMAN')&&html.includes('NETRAL')&&html.includes('TERUKUR'),'prinsip layanan wajib tampil');
 assert(landing.includes('.institution-strip')&&landing.includes('.service-panel')&&landing.includes('.trust-grid'),'layout layanan publik belum lengkap');
 assert(html.includes('header-cta mobile-login')&&landing.includes('.header-cta.mobile-login{display:inline-flex'),'tombol login mobile publik wajib terlihat');
-assert(variables.includes('--national:#c5222a')&&variables.includes('--primary:#0b356b'),'palet institusional wajib');
+assert(variables.includes('--national:#c9a227')&&variables.includes('--primary:#7b1e2d'),'palet institusional marun-emas wajib');
 assert(!/[âÂÃ]/.test(html),'landing tidak boleh mengandung karakter encoding rusak');
 console.log('Government digital service design tests passed.');

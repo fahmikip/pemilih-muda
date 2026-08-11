@@ -1,0 +1,6 @@
+const MaterialsPage=(()=>{
+  const text=(tag,value,className)=>{const node=document.createElement(tag);node.textContent=value;if(className)node.className=className;return node};
+  function render(items){const root=document.querySelector('#published-materials');root.replaceChildren();if(!items.length)return;root.append(text('h2','Materi Terbaru dari Administrator','api-materials-title'));items.forEach((item,index)=>{const article=text('article','', 'material-card'),number=text('span',String(index+1).padStart(2,'0'),'material-number'),category=text('p',item.Category||'EDUKASI','eyebrow'),title=text('h2',item.Title||'Materi Edukasi'),content=text('p',String(item.Content||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim());article.append(number,category,title,content);if(item.VideoURL){const link=text('a','Lihat video','button button-secondary');link.href=item.VideoURL;link.target='_blank';link.rel='noopener noreferrer';article.append(link)}root.append(article)})}
+  async function init(){try{const response=await apiGet('getPublishedMaterials');render(Array.isArray(response.data)?response.data:[])}catch(error){if(CONFIG.DEBUG)console.warn('Materi publik gagal dimuat',error.code)}}
+  return{init};
+})();MaterialsPage.init();

@@ -35,3 +35,5 @@ Mutasi penting menulis `ActivityLogs` dengan actor, action, entity, description,
 ## Deployment
 
 Setelah backend disalin ke Apps Script, buat deployment Web App versi baru dan perbarui `CONFIG.API_URL` jika URL `/exec` berubah. GitHub Pages otomatis menggunakan control center setelah commit `main` terpublikasi.
+
+Untuk mengisi enam materi sosialisasi awal (pemilih pemula, tolak politik uang, stop golput, anti-hoaks, kerahasiaan suara, dan toleransi pilihan), tambahkan `gas-backend/EducationContentService.gs` ke project Apps Script lalu jalankan `seedEducationMaterials()` satu kali dari editor. Fungsi ini idempoten sehingga aman dijalankan ulang dan tidak menggandakan materi yang sudah ada.
