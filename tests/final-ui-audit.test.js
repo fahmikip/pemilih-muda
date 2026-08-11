@@ -24,6 +24,7 @@ assert.match(utils,/isProductionContent/,'penyaring konten nonproduksi belum ter
 for(const file of ['js/app.js','js/profile.js','js/leaderboard.js','js/materials.js','js/quiz.js'])assert.match(fs.readFileSync(path.join(root,file),'utf8'),/isProductionContent/,`${file}: data nonproduksi belum disaring`);
 const landing=fs.readFileSync(path.join(root,'index.html'),'utf8');
 for(const marker of ['Beranda','Alur Layanan','Leaderboard','Tentang','Masuk','Daftar','Install App','Privasi','Aturan Program'])assert(landing.includes(marker),`CTA/tautan landing hilang: ${marker}`);
+assert.match(landing,/href="https:\/\/github\.com\/fahmikip"[^>]*>fahmikip<\/a>/,'copyright GitHub belum tersedia');
 assert.match(landing,/class="mobile-nav-cta" href="login\.html">Masuk/);
 assert.match(landing,/class="mobile-nav-cta" href="register\.html">Daftar/);
 const base=fs.readFileSync(path.join(root,'css/base.css'),'utf8'),responsive=fs.readFileSync(path.join(root,'css/responsive.css'),'utf8');
