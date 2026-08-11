@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('admin.html','utf8'),css=fs.readFileSync('css/admin.css','utf8'),js=fs.readFileSync('js/admin.js','utf8');
+for(const marker of ['admin-sidebar-footer','admin-account','admin-avatar','admin-heading','admin-nav-label'])assert(html.includes(marker),`struktur admin modern hilang: ${marker}`);
+assert(js.includes('menuIcons')&&js.includes('createElementNS'),'sidebar wajib memakai SVG tanpa library besar');
+for(const label of ['Total Peserta','Peserta Aktif','Jumlah Sekolah','Distribusi Nilai'])assert(js.includes(label),`label Indonesia hilang: ${label}`);
+assert(css.includes('position:sticky')&&css.includes('backdrop-filter:blur'),'header modern/sticky wajib');
+assert(css.includes('.admin-table tbody tr:hover')&&css.includes('.admin-toolbar'),'table dan toolbar friendly wajib');
+assert(css.includes('@media(max-width:1000px)')&&css.includes('.admin-sidebar.open'),'drawer tablet wajib dipertahankan');
+assert(!/[âÂÃ]/.test(html),'admin tidak boleh mengandung encoding rusak');
+console.log('Modern admin UI tests passed.');
