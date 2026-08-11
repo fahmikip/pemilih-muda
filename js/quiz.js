@@ -4,12 +4,12 @@ const QuizPage=(()=>{
 
   async function init(){
     const session=Auth.requireLogin();if(!session)return;
-    token=session.token;seasonId=new URLSearchParams(location.search).get("seasonId")||"";
+    token=session.token;seasonId=new URLSearchParams(location.search).get("seasonId")||"";if(!Utils.isProductionContent(seasonId)){showFatal({code:"QUIZ_NOT_AVAILABLE",message:"Challenge belum tersedia."});return}
     try{const started=await apiPost("startQuiz",{seasonId},token);if(started.data.completed){sessionStorage.removeItem('pemilih_muda_quiz_active');renderResult(started.data.result);return}loadPackage(started.data)}catch(error){sessionStorage.removeItem('pemilih_muda_quiz_active');showFatal(error)}
   }
 
   function loadPackage(data){
-    if(!Array.isArray(data.questions)||!data.questions.length){showFatal({code:"QUIZ_NOT_AVAILABLE",message:"Paket soal tidak tersedia pada deployment API ini."});return}
+    if(!Array.isArray(data.questions)||!data.questions.length){showFatal({code:"QUIZ_NOT_AVAILABLE",message:"Paket soal belum tersedia. Silakan coba kembali nanti."});return}
     quizSessionId=data.quizSessionId;questions=data.questions;remaining=Math.max(0,Number(data.remainingSeconds||0));sessionStorage.setItem('pemilih_muda_quiz_active','1');restoreDraft();
     document.querySelector("#quiz-loading")?.setAttribute("hidden","");document.querySelector("#quiz-screen")?.removeAttribute("hidden");Utils.setText("[data-season-name]",data.season.Name);startTimer(Number(data.season.QuizDuration||0));renderQuestion();
   }

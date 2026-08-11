@@ -2,7 +2,7 @@ class ApiError extends Error{constructor(message,code="INTERNAL_ERROR"){super(me
 
 const Api=(()=>{
   async function send(method,action,payload={},token=""){
-    if(!Utils.isConfiguredApi())throw new ApiError("API belum dikonfigurasi. Isi CONFIG.API_URL dengan URL deployment /exec.","API_NOT_CONFIGURED");
+    if(!Utils.isConfiguredApi())throw new ApiError("Layanan belum tersedia. Silakan coba kembali nanti.","API_NOT_CONFIGURED");
     const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),CONFIG.REQUEST_TIMEOUT_MS);
     try{
       let url=CONFIG.API_URL;const options={method,redirect:"follow",signal:controller.signal,cache:"no-store"};
@@ -12,9 +12,9 @@ const Api=(()=>{
         const fields={action,payload:JSON.stringify(payload)};if(token)fields.token=token;
         options.headers={"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"};options.body=new URLSearchParams(fields);
       }
-      const response=await fetch(url,options);if(!response.ok)throw new ApiError(`Server merespons HTTP ${response.status}.`,"NETWORK_ERROR");
-      let result;try{result=await response.json()}catch{throw new ApiError("Respons server bukan JSON yang valid.","INVALID_RESPONSE")}
-      if(!result||typeof result.success!=="boolean")throw new ApiError("Format respons API tidak valid.","INVALID_RESPONSE");
+      const response=await fetch(url,options);if(!response.ok)throw new ApiError(`Layanan sedang mengalami kendala. Silakan coba kembali.`,"NETWORK_ERROR");
+      let result;try{result=await response.json()}catch{throw new ApiError("Jawaban layanan tidak dapat diproses. Silakan coba kembali.","INVALID_RESPONSE")}
+      if(!result||typeof result.success!=="boolean")throw new ApiError("Jawaban layanan tidak dapat diproses. Silakan coba kembali.","INVALID_RESPONSE");
       if(!result.success){handleSessionError(result.code);throw new ApiError(result.message||"Permintaan gagal.",result.code)}
       return result;
     }catch(error){if(error.name==="AbortError")throw new ApiError("Server tidak merespons. Periksa koneksi lalu coba lagi.","REQUEST_TIMEOUT");if(error instanceof ApiError)throw error;throw new ApiError(navigator.onLine?"Tidak dapat terhubung ke server.":"Koneksi internet terputus.","NETWORK_ERROR");}
