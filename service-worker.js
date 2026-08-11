@@ -1,4 +1,4 @@
-const VERSION='2.3.1',BASE='/pemilih-muda/',SHELL=`pemilih-muda-shell-${VERSION}`;
+const VERSION='2.3.2',BASE='/pemilih-muda/',SHELL=`pemilih-muda-shell-${VERSION}`;
 const APP_SHELL=['','index.html','offline.html','manifest.webmanifest','css/variables.css','css/base.css','css/components.css','css/landing.css','css/student.css','css/responsive.css','js/config.js','js/utils.js','js/api.js','js/auth.js','js/app.js','js/install.js','js/bottom-nav.js','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'].map(path=>BASE+path);
 self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL).then(cache=>cache.addAll(APP_SHELL))));
 self.addEventListener('activate',event=>event.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('pemilih-muda-')&&key!==SHELL).map(key=>caches.delete(key)))),self.clients.claim()])));
