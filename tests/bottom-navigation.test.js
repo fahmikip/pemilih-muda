@@ -1,0 +1,13 @@
+const fs=require('fs'),assert=require('assert');
+const js=fs.readFileSync('js/bottom-nav.js','utf8'),css=fs.readFileSync('css/student.css','utf8');
+for(const item of ['Beranda','Challenge','Ranking','Profil'])assert(js.includes(`label:'${item}'`),`menu ${item} hilang`);
+assert(js.includes("page:'app.html#challenge'"),'Challenge harus membuka panel, bukan otomatis memulai quiz');
+assert(js.includes('Utils.pageUrl'),'routing wajib menggunakan BASE_PATH helper');
+assert(js.includes("Role!=='STUDENT'")&&js.includes("'dashboard','quiz','leaderboard','profile'"),'navigation harus participant-only');
+assert(js.includes('createElementNS')&&!/[🏠📝🏆👤]/u.test(js),'icon final harus SVG, bukan emoji');
+assert(js.includes("document.body.dataset.page!=='quiz'")&&js.includes('MutationObserver'),'quiz harus menyembunyikan nav hingga hasil');
+assert(css.includes('@media(max-width:767px)')&&css.includes('position:fixed'),'navigation harus mobile-only dan fixed');
+assert(css.includes('env(safe-area-inset-bottom)')&&css.includes('min-height:56px'),'safe area dan tap target wajib');
+for(const page of ['app.html','quiz.html','leaderboard.html','profile.html'])assert(fs.readFileSync(page,'utf8').includes('js/bottom-nav.js'),`${page} belum memasang component`);
+for(const page of ['index.html','login.html','register.html','admin.html','rules.html'])assert(!fs.readFileSync(page,'utf8').includes('js/bottom-nav.js'),`${page} tidak boleh memasang participant nav`);
+console.log('Mobile bottom navigation contract tests passed.');
